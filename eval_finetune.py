@@ -45,7 +45,7 @@ import models_vit
 
 
 def get_args_parser():
-    parser = argparse.ArgumentParser('MoWNet fine-tuning for image classification', add_help=False)
+    parser = argparse.ArgumentParser('Fine-tuning for image classification', add_help=False)
     parser.add_argument('--batch_size', default=64, type=int,
                         help='Batch size per GPU (effective batch size is batch_size * accum_iter * # gpus')
     parser.add_argument('--epochs', default=100, type=int)

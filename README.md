@@ -127,20 +127,22 @@ PRETRAINED_DIR="moca_vitb16_200epochs_mom994_wd05to20_v1p0"
 OUTPUT_DUMP="${PRETRAINED_DIR}/FTUNE_lr1p0e3_dp0p2_ld065_wu5"
 MODEL_PATH="${PRETRAINED_DIR}/checkpoint-last.pth"
 
+# Train
 torchrun --standalone --nnodes=1 --nproc_per_node=8 eval_finetune.py \
         --data_path "${DATA_PATH}" --finetune "${MODEL_PATH}" --output_dir "${OUTPUT_DUMP}" \
         --accum_iter 1 --batch_size 128 --num_workers 8 --model vit_base_patch16 --dist_eval --use_teacher \
         --global_pool --use_fc_norm --drop_path 0.2 --blr 1.0e-3 --layer_decay 0.65 --warmup_epochs 5 --epochs 100 \
         --reprob 0.25 --mixup 0.8 --cutmix 1.0 --weight_decay 0.05
-# Expected results:
-# Acc@1 83.574 Acc@5 96.602 loss 0.725
 
+# Evaluate
 torchrun --standalone --nnodes=1 --nproc_per_node=8 eval_finetune.py \
         --data_path "${DATA_PATH}" --finetune "${MODEL_PATH}" --output_dir "${OUTPUT_DUMP}" \
-        --accum_iter 1 --batch_size 128 --num_workers 8 --model vit_base_patch16 --use_teacher \
+        --accum_iter 1 --batch_size 250 --num_workers 8 --model vit_base_patch16 --dist_eval --use_teacher \
         --global_pool --use_fc_norm --drop_path 0.2 --blr 1.0e-3 --layer_decay 0.65 --warmup_epochs 5 --epochs 100 \
         --reprob 0.25 --mixup 0.8 --cutmix 1.0 --weight_decay 0.05 --eval \
         --resume "${OUTPUT_DUMP}/checkpoint-last.pth"
+# Expected results:
+# Acc@1 83.642 Acc@5 96.658 loss 0.724
 ```
 
 ## Evaluation on Low-shot ImageNet classification
